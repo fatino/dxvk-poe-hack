@@ -7,4 +7,3 @@ git checkout "$DXVK_VERSION"
 patch -p1 < /root/pipeline.patch
 ./package-release.sh "$DXVK_VERSION" /output --no-package
 
-exec "$@"
