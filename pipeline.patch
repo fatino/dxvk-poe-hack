@@ -12,7 +12,7 @@ index 9a519e46..dea82ee1 100644
    output: 'version.h')
  
 diff --git a/src/dxvk/dxvk_context.cpp b/src/dxvk/dxvk_context.cpp
-index b4f679fa..cf7937e3 100644
+index 97e92a18..2c8069ad 100644
 --- a/src/dxvk/dxvk_context.cpp
 +++ b/src/dxvk/dxvk_context.cpp
 @@ -606,7 +606,7 @@ namespace dxvk {
@@ -74,12 +74,10 @@ index b4f679fa..cf7937e3 100644
  
      if (!m_flags.test(DxvkContextFlag::GpRenderPassBound))
        this->startRenderPass();
-@@ -4465,4 +4472,13 @@ namespace dxvk {
-     }
+@@ -4486,5 +4493,14 @@ namespace dxvk {
+ 
+     return m_cpLookupCache[idx];
    }
-   
--}
-\ No newline at end of file
 +
 +  bool DxvkContext::checkAsyncCompilationCompat() {
 +    bool fbCompat = true;
@@ -89,12 +87,15 @@ index b4f679fa..cf7937e3 100644
 +    }
 +    return fbCompat;
 +  }
+   
+-}
+\ No newline at end of file
 +}
 diff --git a/src/dxvk/dxvk_context.h b/src/dxvk/dxvk_context.h
-index f54f5321..1525f68d 100644
+index b591f802..fa68ec54 100644
 --- a/src/dxvk/dxvk_context.h
 +++ b/src/dxvk/dxvk_context.h
-@@ -1141,7 +1141,7 @@ namespace dxvk {
+@@ -1144,7 +1144,7 @@ namespace dxvk {
              VkDescriptorSet         set,
        const DxvkPipelineLayout*     layout);
  
@@ -103,13 +104,12 @@ index f54f5321..1525f68d 100644
      
      void updateIndexBufferBinding();
      void updateVertexBufferBindings();
-@@ -1179,7 +1179,8 @@ namespace dxvk {
-             VkDescriptorSetLayout     layout);
+@@ -1189,6 +1189,8 @@ namespace dxvk {
+     DxvkComputePipeline* lookupComputePipeline(
+       const DxvkComputePipelineShaders&   shaders);
  
-     void trackDrawBuffer();
--
-+    
 +    bool checkAsyncCompilationCompat();
++
    };
    
 -}
@@ -167,10 +167,10 @@ index 5e05b425..8586c794 100644
        return VK_NULL_HANDLE;
  
 diff --git a/src/dxvk/dxvk_graphics.h b/src/dxvk/dxvk_graphics.h
-index 168e9714..7cccedcf 100644
+index 81c232d0..279346c8 100644
 --- a/src/dxvk/dxvk_graphics.h
 +++ b/src/dxvk/dxvk_graphics.h
-@@ -247,11 +247,13 @@ namespace dxvk {
+@@ -271,11 +271,13 @@ namespace dxvk {
       * state. If necessary, a new pipeline will be created.
       * \param [in] state Pipeline state vector
       * \param [in] renderPass The render pass
@@ -185,7 +185,7 @@ index 168e9714..7cccedcf 100644
      
      /**
       * \brief Compiles a pipeline
-@@ -317,4 +319,4 @@ namespace dxvk {
+@@ -341,4 +343,4 @@ namespace dxvk {
      
    };
    
@@ -386,10 +386,10 @@ index 00000000..a82fff60
 +
 +}
 diff --git a/src/dxvk/dxvk_pipemanager.cpp b/src/dxvk/dxvk_pipemanager.cpp
-index 378bb3d1..5a33a3cc 100644
+index 2e29202e..bca26f70 100644
 --- a/src/dxvk/dxvk_pipemanager.cpp
 +++ b/src/dxvk/dxvk_pipemanager.cpp
-@@ -45,9 +45,13 @@ namespace dxvk {
+@@ -10,9 +10,13 @@ namespace dxvk {
    : m_device    (device),
      m_cache     (new DxvkPipelineCache(device->vkd())) {
      std::string useStateCache = env::getEnvVar("DXVK_STATE_CACHE");
@@ -404,7 +404,7 @@ index 378bb3d1..5a33a3cc 100644
    
    
 diff --git a/src/dxvk/dxvk_pipemanager.h b/src/dxvk/dxvk_pipemanager.h
-index f0087d15..29e758c7 100644
+index 858928ca..4c12a4dc 100644
 --- a/src/dxvk/dxvk_pipemanager.h
 +++ b/src/dxvk/dxvk_pipemanager.h
 @@ -6,6 +6,7 @@
@@ -415,7 +415,7 @@ index f0087d15..29e758c7 100644
  
  namespace dxvk {
  
-@@ -107,6 +108,7 @@ namespace dxvk {
+@@ -95,6 +96,7 @@ namespace dxvk {
      const DxvkDevice*         m_device;
      Rc<DxvkPipelineCache>     m_cache;
      Rc<DxvkStateCache>        m_stateCache;
